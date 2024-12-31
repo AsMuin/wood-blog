@@ -3,7 +3,6 @@ import { blog_data } from '@/assets/assets';
 import BlogItem from './BlogItem';
 import { StaticImageData } from 'next/image';
 import { useState } from 'react';
-import clsx from 'clsx';
 export interface BlogItemProps {
     id: number | string;
     title: string;
