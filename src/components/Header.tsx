@@ -16,9 +16,11 @@ export default function Header() {
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus deserunt temporibus perspiciatis dignissimos eos commodi
                     alias dolor ipsam cum. Esse ullam beatae consequuntur temporibus aut quam voluptatem voluptates quod minima.
                 </p>
-                <form className="mx-auto mt-10 flex max-w-[500px] scale-75 justify-between border border-black sm:scale-100" action="">
+                <form
+                    className="mx-auto mt-10 flex max-w-[500px] scale-75 justify-between border border-black shadow-[-14px_14px_0px_rgba(0,0,0,0.8)] sm:scale-100"
+                    action="">
                     <input className="pl-4 outline-none" type="email" placeholder="请输入你的邮箱" />
-                    <button className="border-1 border-black px-4 py-4 active:bg-slate-600 active:text-white sm:px-8">订阅</button>
+                    <button className="border-l border-black px-4 py-4 active:bg-slate-600 active:text-white sm:px-8">订阅</button>
                 </form>
             </div>
         </div>
