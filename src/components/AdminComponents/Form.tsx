@@ -4,6 +4,7 @@ import { DefaultValues, FieldErrors, FieldValues, RegisterOptions, useForm, UseF
 import FormError from './UI/Error';
 import StatusButton from './UI/StatusButton';
 import Image, { StaticImageData } from 'next/image';
+import clsx from 'clsx';
 
 interface FormProps<T> {
     formData?: T;
@@ -107,6 +108,7 @@ function FormUploadItem({ fieldConfig }: { fieldConfig: UploadFieldProps }) {
                 reader.onloadend = () => {
                     reader.onload = null;
                     reader.onloadend = null;
+                    console.log(file);
                 };
             };
             reader.readAsDataURL(file);
@@ -115,6 +117,8 @@ function FormUploadItem({ fieldConfig }: { fieldConfig: UploadFieldProps }) {
     useEffect(() => {
         const subscription = watch((value, { name }) => {
             //(reset执行时全部为undefined)
+            console.log({ value, name });
+
             if (!name) {
                 // 表单重置
                 setImage(fieldConfig.uploadBGImage || assets.upload_area.src);
@@ -187,8 +191,9 @@ Form.FieldList = function FieldList({ fieldConfigList }: { fieldConfigList: Fiel
 interface FormSubmitButtonProps {
     defaultText?: string;
     loadingText?: string;
+    isError?: boolean | string;
 }
-Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText }: React.PropsWithChildren<FormSubmitButtonProps>) {
+Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText, isError }: React.PropsWithChildren<FormSubmitButtonProps>) {
     const { isSubmitting } = useFormContext();
     if (children) {
         return children;
@@ -196,11 +201,15 @@ Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText }
     return (
         <StatusButton
             type="submit"
-            className="glass min-w-20 bg-green-600 text-xl text-orange-200 hover:text-orange-500"
+            className={clsx('glass min-w-20 text-xl text-orange-200 hover:text-orange-500', {
+                'bg-red-600': isError,
+                'bg-green-600': !isError
+            })}
             disabled={isSubmitting}
             loadingText={loadingText || '处理中'}
             defaultText={defaultText || '确定'}
-            status={isSubmitting ? 'loading' : 'default'}
+            errorText={'提交失败'}
+            status={isError ? 'error' : isSubmitting ? 'loading' : 'default'}
         />
     );
 };

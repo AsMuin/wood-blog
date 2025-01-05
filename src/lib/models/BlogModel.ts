@@ -4,7 +4,7 @@ export interface IBlog {
     _id: string;
     title: string | FormDataEntryValue;
     description: string | FormDataEntryValue;
-    image: string | FormDataEntryValue;
+    image: string | FormDataEntryValue | FileList;
     category: string | FormDataEntryValue;
     author: string | FormDataEntryValue;
     authorImage: string | FormDataEntryValue;
