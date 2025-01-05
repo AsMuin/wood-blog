@@ -73,11 +73,11 @@ export default function AddBlogPage() {
             });
             const response = await res.json();
             if (response.success) {
+                reset();
                 alert('添加成功');
             } else {
                 throw new Error(response.message);
             }
-            reset();
         } catch (error) {
             setIsError(true);
             console.error(error);
