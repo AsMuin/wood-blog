@@ -1,9 +1,9 @@
 import { assets } from '@/assets/assets';
-import { createContext, useContext, useEffect, useRef } from 'react';
-import { DefaultValues, FieldErrors, FieldValues, RegisterOptions, useForm, UseFormRegister, UseFormWatch } from 'react-hook-form';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { DefaultValues, FieldErrors, FieldValues, RegisterOptions, useForm, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import FormError from './UI/Error';
 import StatusButton from './UI/StatusButton';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 interface FormProps<T> {
     formData?: T;
@@ -15,6 +15,7 @@ interface FormContext<T extends FieldValues> {
     isSubmitting: boolean;
     reset: (data: T) => void;
     watch: UseFormWatch<T>;
+    setValue: UseFormSetValue<T>;
 }
 
 export interface FormConfig {
@@ -27,7 +28,8 @@ const FormContext = createContext<FormContext<any>>({
     reset: () => {},
     isSubmitting: false,
     errors: {},
-    watch: () => ({}) as any
+    watch: () => ({}) as any,
+    setValue: () => {}
 });
 
 function useFormContext<T extends FieldValues>() {
@@ -44,7 +46,8 @@ function Form<T extends FieldValues>({ formData, onSubmit, children }: React.Pro
         handleSubmit,
         formState: { errors, isSubmitting },
         watch,
-        reset
+        reset,
+        setValue
     } = useForm<T>({
         defaultValues: formData as DefaultValues<T>
     });
@@ -54,7 +57,8 @@ function Form<T extends FieldValues>({ formData, onSubmit, children }: React.Pro
         reset,
         watch,
         isSubmitting,
-        errors
+        errors,
+        setValue
     };
     return (
         <FormContext.Provider value={ContextValue}>
@@ -86,43 +90,34 @@ Form.UploadFieldList = function UploadFieldList({ fieldConfigList }: { fieldConf
 
 function FormUploadItem({ fieldConfig }: { fieldConfig: UploadFieldProps }) {
     const { register, errors, watch } = useFormContext();
-    const imgEleRef = useRef<HTMLImageElement | null>(null);
-
+    const [image, setImage] = useState<StaticImageData | string>(fieldConfig.uploadBGImage || assets.upload_area);
+    function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = event => {
+                if (event.target?.result && typeof event.target.result === 'string') {
+                    const fileType = file.type;
+                    if (fileType.startsWith('image/')) {
+                        setImage((event.target.result as string) || assets.upload_added.src);
+                    } else {
+                        setImage(assets.upload_added.src);
+                    }
+                }
+                reader.onloadend = () => {
+                    reader.onload = null;
+                    reader.onloadend = null;
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    }
     useEffect(() => {
         const subscription = watch((value, { name }) => {
-            const img = imgEleRef.current;
-            if (!img) {
-                // 不存在图片标签自然不需要处理
-                return;
-            }
             //(reset执行时全部为undefined)
-            if (name) {
-                //表单数据正常更新的情况下
-
-                // 判断是否存在值以及当前字段是否匹配
-                const isCurrentField = name === fieldConfig.key;
-                if (value && isCurrentField) {
-                    const file = value?.[name]?.[0];
-                    const reader = new FileReader();
-                    reader.onload = event => {
-                        if (event.target?.result && typeof event.target.result === 'string') {
-                            const fileType = file.type;
-                            if (fileType.startsWith('image/')) {
-                                img.src = (event.target.result as string) || assets.upload_area.src;
-                            } else {
-                                img.src = assets.upload_area.src;
-                            }
-                        }
-                        reader.onloadend = () => {
-                            reader.onload = null;
-                            reader.onloadend = null;
-                        };
-                    };
-                    reader.readAsDataURL(file);
-                }
-            } else {
+            if (!name) {
                 // 表单重置
-                img.src = fieldConfig.uploadBGImage || assets.upload_area.src;
+                setImage(fieldConfig.uploadBGImage || assets.upload_area.src);
             }
         });
         return () => {
@@ -131,14 +126,14 @@ function FormUploadItem({ fieldConfig }: { fieldConfig: UploadFieldProps }) {
     }, [watch, fieldConfig.uploadBGImage, fieldConfig.key]);
     return (
         <label key={fieldConfig.key}>
-            <p className="text-center text-lg">{fieldConfig.label}</p>
-            <input type="file" hidden accept={fieldConfig.uploadAccept} {...register(fieldConfig.key, fieldConfig.options)} />
-            <Image
-                ref={imgEleRef}
-                className="mx-auto max-h-24 w-auto cursor-pointer"
-                src={fieldConfig.uploadBGImage || assets.upload_area}
-                alt="uploadImage"
+            <p className="mb-2 text-center text-lg">{fieldConfig.label}</p>
+            <input
+                type="file"
+                hidden
+                accept={fieldConfig.uploadAccept}
+                {...register(fieldConfig.key, { ...fieldConfig.options, onChange: onFileChange })}
             />
+            <Image className="mx-auto max-h-24 min-w-24 max-w-48 cursor-pointer" height={96} width={96} src={image} alt="uploadImage" />
             <FormError errorMessage={errors?.[fieldConfig.key]?.message as string} />
         </label>
     );
