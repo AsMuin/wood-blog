@@ -9,3 +9,8 @@
     :root {
     }
 }
+
+img {
+    width: auto; /* 或者 height: auto */
+    height: auto;
+}

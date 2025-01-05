@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 export interface IBlog {
+    _id: string;
     title: string | FormDataEntryValue;
     description: string | FormDataEntryValue;
     image: string | FormDataEntryValue;
@@ -41,5 +42,8 @@ const BlogSchema = new mongoose.Schema<IBlog>({
     }
 });
 
-const Blog = mongoose.models.Blog<IBlog> || mongoose.model<IBlog>('Blog', BlogSchema);
-export default Blog;
+// 使用获取到的类型声明变量
+const Blog = mongoose.model<IBlog>('Blog', BlogSchema);
+const BlogExport: typeof Blog = mongoose.models.Blog || Blog;
+
+export default BlogExport;
