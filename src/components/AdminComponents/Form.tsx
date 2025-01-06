@@ -208,7 +208,7 @@ Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText, 
             disabled={isSubmitting}
             loadingText={loadingText || '处理中'}
             defaultText={defaultText || '确定'}
-            errorText={ typeof error === 'string' ? error : '提交失败'}
+            errorText={typeof error === 'string' ? error : '提交失败'}
             status={error ? 'error' : isSubmitting ? 'loading' : 'default'}
         />
     );
