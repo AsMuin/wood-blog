@@ -1,23 +1,24 @@
 'use client';
-import { blog_data } from '@/assets/assets';
+// import { blog_data } from '@/assets/assets';
 import BlogItem from './BlogItem';
 import { StaticImageData } from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 export interface BlogItemProps {
-    id: number | string;
+    _id: number | string;
     title: string;
     description: string;
-    image: StaticImageData;
+    image: string | StaticImageData;
     date: number;
     category: string;
     author: string;
     author_img: StaticImageData;
 }
 export default function BlogList() {
-    const [menu, setMenu] = useState('all');
+    const [menu, setMenu] = useState('All');
+    const [blogData, setBlogData] = useState<BlogItemProps[]>([]);
     const menuList = [
         {
-            key: 'all',
+            key: 'All',
             label: '所有'
         },
         {
@@ -33,6 +34,21 @@ export default function BlogList() {
             label: '生活'
         }
     ];
+    useEffect(() => {
+        const controller = new AbortController();
+        const fetchURL = new URL('/api/blog', window.location.origin);
+        fetchURL.searchParams.set('category', menu);
+        fetch(fetchURL, { signal: controller.signal })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setBlogData(data.data.itemList);
+                }
+            });
+        return () => {
+            controller.abort();
+        };
+    }, [menu]);
     return (
         <div>
             <div className="my-10 flex justify-center gap-6">
@@ -47,10 +63,10 @@ export default function BlogList() {
                 ))}
             </div>
             <div className="mg-16 flex flex-wrap justify-around gap-1 gap-y-10 xl:mx-24">
-                {blog_data
-                    .filter(blog => blog.category === menu || menu === 'all')
+                {blogData
+                    // .filter(blog => blog.category === menu || menu === 'all')
                     .map(blog => (
-                        <BlogItem key={blog.id} {...blog} />
+                        <BlogItem key={blog._id} {...blog} />
                     ))}
             </div>
         </div>

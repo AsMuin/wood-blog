@@ -1,15 +1,21 @@
 import uploadFile from '@/lib/config/cloudFlare';
 import connectToMongoDB from '@/lib/config/mongodb';
 import Blog from '@/lib/models/BlogModel';
+import pageQuery from '@/utils/pageQuery';
 import apiResponse from '@/utils/response';
-import { NextResponse } from 'next/server';
 
 connectToMongoDB();
 
 export async function GET(request: Request) {
-    console.log('Blog Get');
-    return NextResponse.json({
-        message: 'Blog Get'
+    const { pageIndex = 0, pageSize = 10, category } = Object.fromEntries(new URL(request.url).searchParams);
+    const blogPageQuery = pageQuery(Blog);
+
+    const response = await blogPageQuery(pageIndex, pageSize, {
+        category: category === 'All' ? undefined : category
+    });
+
+    return apiResponse(true, 'get Blog Success', {
+        data: response
     });
 }
 
