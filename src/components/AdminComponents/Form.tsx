@@ -191,9 +191,9 @@ Form.FieldList = function FieldList({ fieldConfigList }: { fieldConfigList: Fiel
 interface FormSubmitButtonProps {
     defaultText?: string;
     loadingText?: string;
-    isError?: boolean | string;
+    error?: boolean | string;
 }
-Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText, isError }: React.PropsWithChildren<FormSubmitButtonProps>) {
+Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText, error }: React.PropsWithChildren<FormSubmitButtonProps>) {
     const { isSubmitting } = useFormContext();
     if (children) {
         return children;
@@ -202,14 +202,14 @@ Form.SubmitButton = function SubmitButton({ defaultText, children, loadingText, 
         <StatusButton
             type="submit"
             className={clsx('glass min-w-20 text-xl text-orange-200 hover:text-orange-500', {
-                'bg-red-600': isError,
-                'bg-green-600': !isError
+                'bg-red-600': error,
+                'bg-green-600': !error
             })}
             disabled={isSubmitting}
             loadingText={loadingText || '处理中'}
             defaultText={defaultText || '确定'}
-            errorText={'提交失败'}
-            status={isError ? 'error' : isSubmitting ? 'loading' : 'default'}
+            errorText={ typeof error === 'string' ? error : '提交失败'}
+            status={error ? 'error' : isSubmitting ? 'loading' : 'default'}
         />
     );
 };

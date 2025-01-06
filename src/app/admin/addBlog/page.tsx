@@ -87,7 +87,7 @@ export default function AddBlogPage() {
         <Form onSubmit={onSubmit}>
             <Form.UploadFieldList fieldConfigList={formUploadConfig} />
             <Form.FieldList fieldConfigList={formInputConfig} />
-            <Form.SubmitButton isError={isError} />
+            <Form.SubmitButton error={isError} />
         </Form>
     );
 }
