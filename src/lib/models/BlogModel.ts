@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 
 export interface IBlog {
     _id: string;
-    title: string | FormDataEntryValue;
-    description: string | FormDataEntryValue;
-    image: string | FormDataEntryValue | FileList;
-    category: string | FormDataEntryValue;
-    author: string | FormDataEntryValue;
-    authorImage: string | FormDataEntryValue;
+    title: string;
+    description: string;
+    image: string | FileList;
+    category: string;
+    author: string;
+    authorImage: string;
     date?: Date;
 }
 

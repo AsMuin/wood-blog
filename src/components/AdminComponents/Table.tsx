@@ -1,10 +1,9 @@
-export interface TableColumn<T> {
-    key: keyof T | string;
-
+export interface TableColumn<T, K extends keyof T = keyof T> {
+    key: K | 'action';
     header: TableHeader;
-
-    render?: (value: T[keyof T], rowData: T, index: number) => React.ReactNode;
+    render?: (value: T[K], rowData: T, index: number) => React.ReactNode;
 }
+
 interface TableConfigProps<T> {
     columns: TableColumn<T>[];
     dataSource: T[];
@@ -28,7 +27,7 @@ function Table<T>({ columns, dataSource, isLoading = false, isError = false }: T
                     <thead>
                         <tr>
                             {columns.map(column => (
-                                <TableHeader key={column.key as string | number} render={column.header} />
+                                <TableHeader key={column.key as string} render={column.header} />
                             ))}
                         </tr>
                     </thead>
@@ -50,7 +49,7 @@ function TableHeader({ render }: { render: TableHeader }) {
 }
 
 interface TableRowProps<T> {
-    columns: TableColumn<T>[];
+    columns: TableColumn<T, keyof T>[];
     rowData: T;
     index: number;
 }
@@ -60,7 +59,7 @@ function TableRow<T>({ columns, rowData, index }: TableRowProps<T>) {
         <tr className="hover:bg-slate-100">
             {columns.map(column => (
                 <TableRowCell
-                    key={column.key as string | number}
+                    key={column.key as string}
                     rowData={rowData}
                     value={rowData[column.key as keyof T]}
                     index={index}
@@ -71,12 +70,12 @@ function TableRow<T>({ columns, rowData, index }: TableRowProps<T>) {
     );
 }
 
-interface TableRowCellProps<T> {
+interface TableRowCellProps<T, K extends keyof T = keyof T> {
     rowData: T;
-    value: T[keyof T];
+    value: T[K];
     index: number;
-    render?: (value: T[keyof T], rowData: T, index: number) => React.ReactNode;
-    children?: (value: T[keyof T], rowData: T, index: number) => React.ReactNode;
+    render?: (value: T[K], rowData: T, index: number) => React.ReactNode;
+    children?: (value: T[K], rowData: T, index: number) => React.ReactNode;
 }
 
 function TableRowCell<T>({ render, rowData, value, index, children }: TableRowCellProps<T>) {
