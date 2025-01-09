@@ -11,7 +11,7 @@ export default async function BlogPage({ params }: { params: { id: string | numb
             <div className="flex flex-1 flex-col bg-gray-200 px-5 py-5 md:px-12 lg:px-28">
                 <div className="flex items-center justify-between">
                     <Link href="/">
-                        <Image src={assets.logo} alt="logo" className="w-[130px] sm:w-auto" />
+                        <Image src={assets.logo} alt="logo" className="w-auto sm:w-[max(130px,12vw)]" />
                     </Link>
                     <button className="flex items-center gap-2 border border-black px-3 py-1 font-medium shadow-[-7px_7px_0px_rgba(0,0,0,0.8)] sm:px-6 sm:py-3">
                         开始
