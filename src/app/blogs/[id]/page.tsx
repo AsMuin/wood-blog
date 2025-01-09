@@ -1,10 +1,11 @@
-import { assets, blog_data } from '@/assets/assets';
+import { assets } from '@/assets/assets';
 import Image from 'next/image';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 export default async function BlogPage({ params }: { params: { id: string | number } }) {
     const { id } = await params;
-    const blogData = await blog_data.find(item => item.id === id || item.id === Number(id));
+    const response = await fetch(`${process.env.APP_BASEURL}/api/blogs?id=${id}`);
+    const { data: blogData } = await response.json();
     return (
         <div className="flex min-h-screen flex-col">
             <div className="flex flex-1 flex-col bg-gray-200 px-5 py-5 md:px-12 lg:px-28">
@@ -22,16 +23,16 @@ export default async function BlogPage({ params }: { params: { id: string | numb
                         <div className="mt-24 text-center">
                             <h1 className="mx-auto max-w-[700px] text-2xl font-semibold sm:text-5xl">{blogData?.title}</h1>
                             <Image
-                                className="mx-auto mt-6 rounded-full border border-white"
+                                className="mx-auto mt-6 max-h-14 max-w-14 rounded-full border border-white"
                                 width={60}
                                 height={60}
-                                src={blogData.author_img}
+                                src={blogData.author_img || assets.profile_icon}
                                 alt="authorImage"
                             />
                             <p className="mx-auto mt-1 max-w-[740px] pb-2 text-lg">{blogData.author}</p>
                         </div>
                         <div className="mx-5 mb-10 max-w-[800px] md:mx-auto">
-                            <Image className="shadow-lg" src={blogData.image} width={1280} height={720} alt="blogImage" />
+                            <Image className="mx-auto min-w-96 shadow-lg" src={blogData.image} width={400} height={720} alt="blogImage" />
                             <h1 className="my-8 text-[26px] font-semibold">介绍：</h1>
                             <p>{blogData.description}</p>
                             <h3 className="my-5 text-[18px] font-semibold">

@@ -36,7 +36,7 @@ export default function BlogList() {
     ];
     useEffect(() => {
         const controller = new AbortController();
-        const fetchURL = new URL('/api/blog', window.location.origin);
+        const fetchURL = new URL('/api/blogs', window.location.origin);
         fetchURL.searchParams.set('category', menu);
         fetch(fetchURL, { signal: controller.signal })
             .then(res => res.json())

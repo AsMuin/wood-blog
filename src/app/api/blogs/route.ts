@@ -7,16 +7,28 @@ import apiResponse from '@/utils/response';
 connectToMongoDB();
 
 export async function GET(request: Request) {
-    const { pageIndex = 0, pageSize = 10, category } = Object.fromEntries(new URL(request.url).searchParams);
-    const blogPageQuery = pageQuery(Blog);
+    try {
+        const { pageIndex = 0, pageSize = 10, category, id } = Object.fromEntries(new URL(request.url).searchParams);
 
-    const response = await blogPageQuery(pageIndex, pageSize, {
-        category: category === 'All' ? undefined : category
-    });
+        if (id) {
+            const selectBlog = await Blog.findById(id);
+            return apiResponse(true, 'get Blog Success', {
+                data: selectBlog
+            });
+        }
 
-    return apiResponse(true, 'get Blog Success', {
-        data: response
-    });
+        const blogPageQuery = pageQuery(Blog);
+
+        const response = await blogPageQuery(pageIndex, pageSize, {
+            category: category === 'All' ? undefined : category
+        });
+
+        return apiResponse(true, 'get Blog Success', {
+            data: response
+        });
+    } catch (error) {
+        return apiResponse(false, error instanceof Error ? error.message : 'Blog Get Error');
+    }
 }
 
 export async function POST(request: Request) {
