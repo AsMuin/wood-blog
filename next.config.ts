@@ -3,7 +3,12 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
     /* config options here */
     images: {
-        domains: ['cloud.asmuin.top'] // Add your domain here
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'cloud.asmuin.top'
+            }
+        ] // Add your domain here
     }
 };
 
