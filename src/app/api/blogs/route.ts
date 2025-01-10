@@ -76,3 +76,22 @@ export async function POST(request: Request) {
         return apiResponse(false, error instanceof Error ? error.message : 'Blog Post Error');
     }
 }
+
+export async function DELETE(request: Request) {
+    try {
+        const { id } = await request.json();
+        if (!id) {
+            return apiResponse(false, 'id is required');
+        }
+        try {
+            await Blog.findByIdAndDelete(id);
+            return apiResponse(true, 'delete Blog Success');
+        } catch (error) {
+            console.error(error);
+            return apiResponse(false, error instanceof Error ? error.message : 'Blog Delete Error');
+        }
+    } catch (error) {
+        console.error(error);
+        return apiResponse(false, error instanceof Error ? error.message : 'Blog Delete Error');
+    }
+}
