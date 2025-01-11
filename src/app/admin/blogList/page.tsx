@@ -48,7 +48,11 @@ export default function BlogListPage() {
             }
         } catch (error) {
             setIsLoading(false);
-            setError(error instanceof Error ? error.message : '数据请求出错');
+            if (error instanceof Error && error.name === 'AbortError') {
+                return;
+            } else {
+                setError(error instanceof Error ? error.message : '数据请求出错');
+            }
         }
     }
     useEffect(() => {

@@ -4,10 +4,9 @@ import Blog from '@/lib/models/BlogModel';
 import pageQuery from '@/utils/pageQuery';
 import apiResponse from '@/utils/response';
 
-connectToMongoDB();
-
 export async function GET(request: Request) {
     try {
+        await connectToMongoDB();
         const { pageIndex = 0, pageSize = 10, category, id } = Object.fromEntries(new URL(request.url).searchParams);
 
         if (id) {
@@ -33,6 +32,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     try {
+        await connectToMongoDB();
         const formData = await request.formData();
         const timestamp = Date.now();
         const image = formData.get('image') as File;
@@ -79,6 +79,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
     try {
+        await connectToMongoDB();
         const { id } = await request.json();
         if (!id) {
             return apiResponse(false, 'id is required');

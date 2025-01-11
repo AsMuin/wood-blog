@@ -44,9 +44,14 @@ export default function BlogList() {
                 if (data.success) {
                     setBlogData(data.data.itemList);
                 }
+            })
+            .catch(error => {
+                console.error(error);
             });
         return () => {
-            controller.abort();
+            if (!controller.signal.aborted) {
+                controller.abort();
+            }
         };
     }, [menu]);
     return (
