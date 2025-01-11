@@ -1,5 +1,6 @@
 'use client';
 import Form, { FieldProps, UploadFieldProps } from '@/components/AdminComponents/Form';
+import { showMessage } from '@/components/MessageManager';
 import { IBlog } from '@/lib/models/BlogModel';
 import { useState } from 'react';
 
@@ -81,6 +82,10 @@ export default function AddBlogPage() {
         } catch (error) {
             setIsError(true);
             console.error(error);
+            showMessage({
+                type: 'error',
+                message: error instanceof Error ? error.message : '添加失败'
+            });
         }
     }
     return (

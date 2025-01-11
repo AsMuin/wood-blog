@@ -3,6 +3,7 @@ import Table, { TableColumn } from '@/components/AdminComponents/Table';
 import { IBlog } from '@/lib/models/BlogModel';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { showMessage } from '@/components/MessageManager';
 
 export default function BlogListPage() {
     const [blogList, setBlogList] = useState<IBlog[]>([]);
@@ -24,6 +25,10 @@ export default function BlogListPage() {
             }
         } catch (error) {
             console.error(error);
+            showMessage({
+                type: 'error',
+                message: error instanceof Error ? error.message : '删除失败'
+            });
         }
     }
 
@@ -92,30 +97,6 @@ export default function BlogListPage() {
             )
         }
     ];
-    // async function onDeleteAlbum(id: string) {
-    //     try {
-    //         const newSongListResponse = {
-    //             ...albumListResponse!,
-    //             data: {
-    //                 ...albumListResponse!.data,
-    //                 itemList: albumList.filter(song => song._id !== id)
-    //             }
-    //         };
-    //         const mutateOption = {
-    //             optimisticData: newSongListResponse,
-    //             rollbackOnError(error: any) {
-    //                 return error.name !== 'AbortError';
-    //             }
-    //         };
-    //         await mutate(deleteAlbum({ id }), mutateOption);
-    //         showMessage({
-    //             type: 'success',
-    //             message: '删除成功'
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
     return (
         <div>
             <p>博客列表</p>
