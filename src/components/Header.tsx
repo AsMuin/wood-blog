@@ -9,15 +9,23 @@ export default function Header() {
         e.preventDefault();
         fetch('/api/email', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ email })
         })
             .then(res => res.json())
             .then(data => {
                 console.log(data);
-                showMessage({
-                    type: 'success',
-                    message: '订阅成功'
-                });
+                if (data.success) {
+                    showMessage({
+                        type: 'success',
+                        message: '订阅成功'
+                    });
+                    setEmail('');
+                } else {
+                    throw new Error(data.message);
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -48,7 +56,7 @@ export default function Header() {
                     <input
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        className="pl-4 outline-none"
+                        className="w-full pl-4 outline-none"
                         type="email"
                         placeholder="请输入你的邮箱"
                     />

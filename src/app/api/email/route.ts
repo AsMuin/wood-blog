@@ -4,8 +4,7 @@ import mongooseConnect from '@/lib/config/mongodb';
 mongooseConnect();
 export async function POST(request: Request) {
     try {
-        const formData = await request.formData();
-        const email = formData.get('email') || '';
+        const { email } = await request.json();
         if (!email) {
             return apiResponse(false, 'email is required');
         }
